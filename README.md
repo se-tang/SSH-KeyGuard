@@ -14,19 +14,19 @@
 在 VPS 的 **root SSH 终端**复制执行，下载并打开交互菜单：
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/se-tang/SSH-KeyGuard/main/install.sh?v=0.3.3 | sh
+curl -fsSL https://raw.githubusercontent.com/se-tang/SSH-KeyGuard/refs/heads/main/install.sh | sh
 ```
 
 普通 sudo 用户使用：
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/se-tang/SSH-KeyGuard/main/install.sh?v=0.3.3 | sudo sh
+curl -fsSL https://raw.githubusercontent.com/se-tang/SSH-KeyGuard/refs/heads/main/install.sh | sudo sh
 ```
 
 只有 wget 时（root）：
 
 ```sh
-wget -qO- https://raw.githubusercontent.com/se-tang/SSH-KeyGuard/main/install.sh?v=0.3.3 | sh
+wget -qO- https://raw.githubusercontent.com/se-tang/SSH-KeyGuard/refs/heads/main/install.sh | sh
 ```
 
 需要 Bash 和 curl/wget；Alpine 首次可执行 `apk add bash curl ca-certificates`。启动器完整下载管理脚本并检查语法后，从当前终端读取菜单输入；退出后删除本次下载的临时文件。每次运行获取 main 分支的启动器，再下载其指定的已验证版本，避免缓存造成版本混用。不安装常驻服务，也不会直接修改 SSH 配置。添加公钥、独立会话验证和输入 `YES` 确认的流程保持不变。
