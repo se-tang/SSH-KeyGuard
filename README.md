@@ -2,12 +2,36 @@
 
 **SSH KeyGuard** 是一个纯 Bash 编写的 VPS SSH 密钥管理与认证加固工具。主要适配安装了 OpenSSH Server 的 **Debian / Ubuntu / Alpine Linux**，提供交互式菜单，不需要 Docker、Python、数据库或常驻后台服务。
 
-- 当前版本：`0.3.2`
+- 当前版本：`0.3.3`
 - 运行权限：`root`
 - 默认配置：`/etc/ssh/sshd_config`
 - 默认备份目录：`/var/backups/ssh-keyguard/`
 - 服务管理：systemd（Debian / Ubuntu 常见）或 OpenRC（Alpine）
 - 许可证：MIT
+
+## 一键运行
+
+在 VPS 的 **root SSH 终端**复制执行，下载并打开交互菜单：
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/se-tang/SSH-KeyGuard/main/install.sh | sh
+```
+
+普通 sudo 用户使用：
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/se-tang/SSH-KeyGuard/main/install.sh | sudo sh
+```
+
+只有 wget 时（root）：
+
+```sh
+wget -qO- https://raw.githubusercontent.com/se-tang/SSH-KeyGuard/main/install.sh | sh
+```
+
+需要 Bash 和 curl/wget；Alpine 首次可执行 `apk add bash curl ca-certificates`。启动器完整下载管理脚本并检查语法后，从当前终端读取菜单输入；退出后删除本次下载的临时文件。每次运行获取 main 分支最新版，不安装常驻服务，也不会直接修改 SSH 配置。添加公钥、独立会话验证和输入 `YES` 确认的流程保持不变。
+
+仓库必须对运行命令的机器公开可读；出现 404 时请先确认仓库可见性。命令执行的是此仓库提供的代码。
 
 ## 系统要求
 
@@ -20,13 +44,13 @@
 
 ```bash
 sudo apt update
-sudo apt install -y bash openssh-server
+sudo apt install -y bash curl ca-certificates openssh-server
 ```
 
 ### Alpine Linux
 
 ```sh
-apk add bash openssh
+apk add bash curl ca-certificates openssh
 ```
 
 如果 SSH 服务尚未启用，可通过 OpenRC 启用并启动：
@@ -42,7 +66,7 @@ rc-service sshd start
 
 ```text
 ========== SSH KeyGuard ==========
-轻量 SSH 密钥管理与安全加固工具 v0.3.2
+轻量 SSH 密钥管理与安全加固工具 v0.3.3
 当前系统：...
 ----------------------------------
 1. 添加 SSH 公钥
@@ -58,7 +82,7 @@ rc-service sshd start
 请选择：
 ```
 
-## 安装与运行
+## 手动下载运行（可选）
 
 下载并解压 ZIP，进入项目目录：
 
@@ -139,7 +163,7 @@ KbdInteractiveAuthentication no
 
 ## 安全设计与限制
 
-- 纯 Bash；不联网、不生成或上传私钥、不修改 SSH 端口和防火墙。
+- 管理脚本为纯 Bash，不联网、不生成或上传私钥、不修改 SSH 端口和防火墙。一键启动器为 POSIX sh，只联网下载本仓库的管理脚本，不会发送密钥或服务器配置。
 - 添加公钥时采用追加方式，不覆盖已有 `authorized_keys`；重复公钥不会重复写入。
 - 写入前使用 `ssh-keygen` 验证真实密钥结构并显示指纹；已有文件缺少末尾换行时先补换行，避免两条密钥粘在同一行。
 - 普通用户的目录创建、权限修改和公钥追加均以该用户身份执行，不再由 root 对其目录执行 `chown`。已有目录或文件若归 root 所有而不可写，将报告错误并要求人工检查。Root 的家目录及其父目录、已有 `.ssh` 目录必须归 root 所有、不可被组或其他用户写入且不含符号链接，否则拒绝写入。
@@ -168,9 +192,11 @@ sudo sshd -T | grep -Ei '^(pubkeyauthentication|passwordauthentication|kbdintera
 
 ```bash
 sudo bash tests/regression.sh
+# 一键启动器检查（需要 util-linux 的 script 工具）：
+sudo bash tests/launcher.sh
 ```
 
-测试需要存在 `nobody` 用户、`ssh-keygen` 和 `runuser`/`su`。回归测试不能替代目标发行版的真实新连接验证。
+安全回归测试需要存在 `nobody` 用户、`ssh-keygen` 和 `runuser`/`su`。启动器测试使用伪终端和模拟下载，覆盖菜单输入、下载/语法失败、退出码和清理。回归测试不能替代目标发行版的真实新连接验证。
 
 ## 自定义测试路径
 

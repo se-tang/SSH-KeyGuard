@@ -4,7 +4,7 @@
 set -Eeuo pipefail
 umask 077
 
-APP_VERSION="0.3.2"
+APP_VERSION="0.3.3"
 CONFIG="${SSH_KEYGUARD_CONFIG:-/etc/ssh/sshd_config}"
 BACKUP_DIR="${SSH_KEYGUARD_BACKUP_DIR:-/var/backups/ssh-keyguard}"
 SSHD="${SSHD_BIN:-$(command -v sshd || true)}"
