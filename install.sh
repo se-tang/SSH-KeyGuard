@@ -22,7 +22,8 @@ trap 'exit 129' HUP
 trap 'exit 130' INT
 trap 'exit 143' TERM
 target="$work/ssh-keyguard.sh"
-url='https://raw.githubusercontent.com/se-tang/SSH-KeyGuard/main/ssh-keyguard.sh'
+# Immutable, tested v0.3.3 manager; avoid mixing versions through main's CDN cache.
+url='https://raw.githubusercontent.com/se-tang/SSH-KeyGuard/0e0ccc7abaa8442c7621cdfe812e786d8207c03b/ssh-keyguard.sh'
 
 if command -v curl >/dev/null 2>&1; then
   if ! curl -fSL --connect-timeout 15 --max-time 120 "$url" -o "$target"; then
